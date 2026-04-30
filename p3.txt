@@ -1,0 +1,205 @@
+##30/4/26 added perera ward
+
+BEGIN {
+    ## usage gawk -f p3 data1 data2 data3 
+    ## will process data1 data2 data3 == assume each data is the same 
+    ## will append 
+    ## using multifile state accumulation.. this is brilliant.
+
+
+
+    FS = ","
+    OFS = ","
+
+    # Doctor code map
+    DOC["Land"]="bl"
+    DOC["Mele"]="gm"
+    DOC["Bui"]="db"
+    DOC["Cobelas"]="cc"
+    DOC["Chong"]="mc"
+    DOC["Lowman"]="dl"
+    DOC["Marson"]="rm"
+    DOC["Dowling"]="sd"
+    DOC["Laurence"]="hl"
+    DOC["Nathan"]="gn"
+    DOC["Archer"]="pa"
+    DOC["Bridgart"]="tb"
+    DOC["Bridgford"]="lb"
+    DOC["Clarke"]="lc"
+    DOC["Hezekiah"]="dh"
+    DOC["Kapitan"]="sk"
+    DOC["Lew"]="ml"
+    DOC["Lim"]="jl"
+    DOC["Primrose"]="rp"
+    DOC["Rathe"]="sr"
+    DOC["Rosengarten"]="ar"
+    DOC["Smith"]="ls"
+    DOC["Varma"]="av"
+    DOC["Hannon"]="fh"
+    DOC["Hoo"]="xh"
+    DOC["Knight"]="ck"
+    DOC["Lee"]="blee"
+    DOC["Mccarthy"]="bm"
+    DOC["Mc Carthy"]="bm"
+    DOC["Tang"]="lt"   		##leonie Tang
+    DOC["Moussa"]="km"
+    DOC["Wallace"]="aw"
+    DOC["Lynch"]="mlynch" 	##Marty Lynch
+    DOC["Perera"] ="yp" 	## yas perera
+    DOC["Ward"] = "lw" 		## libby ward  
+
+
+    JUST_REQUEST["pa"]=1
+    JUST_REQUEST["ls"]=1
+    JUST_REQUEST["km"]=1
+    JUST_REQUEST["aw"]=1
+    JUST_REQUEST["rp"]=1
+    JUST_REQUEST["gn"]=1
+    JUST_REQUEST["hl"]=1
+
+
+
+
+    # Weekday markers
+    weekdays["Mon"]=weekdays["Tue"]=weekdays["Wed"]=weekdays["Thu"]=weekdays["Fri"]=weekdays["Sat"]=weekdays["Sun"]=1
+
+    # Shift translation table
+    translate["CST 0800-1800"]="c"
+    translate["CST 0800-1700"]="c"
+    translate["CST 0800-1600"]="c"
+    translate["CST 1200-1800"]="c"
+    translate["CST 1200-1500"]="c"
+    translate["CST 1200-1600"]="c"
+    translate["CST 1100-1600"]="c"
+    translate["CST 1400-1600"]="p"
+    translate["CST 1600-1800"]="c"
+    translate["CST 1700-1800"]="c"
+    translate["CST 1400-1800"]="c"
+    translate["CST 1400-1700"]="c"
+
+    translate["MH 0800-1800 SSU"]="a"
+    translate["MH 0800-1800 IC"]="a"
+    translate["MH 0800-1800"]="a"
+    translate["MH 0800-1700 SSU"]="a"
+    translate["MH 0800-1700 IC"]="a"
+    translate["MH 0800-1700"]="a"
+    translate["MH 0800-1200"]="a"
+    translate["MH 0800-1600 SSU"]="a"
+    translate["MH 0800-1600 IC"]="a"
+    translate["MH 0800-1600"]="a"
+    translate["MH 1600-2400"]="p"
+    translate["MH 1400-2400"]="p"
+    translate["MH 1700-2400"]="p"
+
+    translate["Study Leave"]="cl"
+    translate["CONF"]="cl"
+    translate["AL"]="al"
+    translate["Annual Leave"]="al"
+    translate["al"]="al"
+    translate["LPPA"]="lppa"
+    translate["L-WOP"]="lwop"
+    translate["oc"]="p"
+    translate["OnCall"]="p"
+    translate["0000-0800 OC CAT2"]="p"
+    translate["DFL"]="l"
+    translate["PHNW"]="phnw"
+
+
+    translate["U 0000-2359"]="o"
+    translate["AP 0000-2359"]="apo"
+    translate["AA 0800-1800"]="a"
+    translate["PP 1400-2400"]="p"
+    translate["UP 1900-2400"]="ao"
+    translate["UA 0800-1100"]="po"
+
+} #END BEGIN
+
+# Reset ONLY per-file state
+FNR == 1 {
+    delete KEEP
+    delete DAY
+    day_counter = 0
+}
+
+NR > 1 {
+    gsub(/,/, "", $1)
+
+    # Detect weekday columns
+    for (i = 1; i <= NF; i++) {
+        if ($i in weekdays) {
+            KEEP[i] = 1
+            DAY[i] = ++day_counter
+        }
+    }
+
+    # Process doctor rows
+    if ($1 ~ /^"(Doctor|Specialist) - /) {
+
+        sub(/^"(Doctor|Specialist) - /, "", $1)
+        sub(/"$/, "", $1)
+        sub(/,.*/, "", $1)
+
+        doc = translate_doc($1)
+
+        if (!(doc in seen)) {
+            seen[doc] = 1
+            order[++count] = doc
+        }
+
+        if (doc == "no_doc") {
+            NO_DOCS[++nd] = $1
+            next
+        }
+
+        # BULLETPROOF SHIFT ACCUMULATION
+        delete S
+        n = 0
+
+        for (j = 2; j <= NF; j++) {
+            if (!KEEP[j-1]) continue
+
+            raw = $j
+            gsub(/^ +| +$/, "", raw)
+            gsub(/"/, "", raw)
+
+      
+            if (raw == "") shift = "apoc"
+            else 
+            if (raw in translate) shift = translate[raw]
+            else
+            shift = "XX__NO_TRANSLATE"
+
+            n++
+            S[n] = shift
+
+            # Append across files
+            if (doc in shifts)
+                shifts[doc] = shifts[doc] "," shift
+            else
+                shifts[doc] = shift
+        }
+
+        # Emit clean comma-joined output
+        out = S[1]
+        for (k = 2; k <= n; k++) out = out "," S[k]
+
+        ##print out
+    }
+}
+
+END {
+    for (d in NO_DOCS)
+        print NO_DOCS[d] > "no_docs.log"
+
+    for (i = 1; i <= count; i++) {
+        doc = order[i]
+        if (doc != "no_doc")
+         print doc "," shifts[doc]
+    }
+
+
+} #END END
+
+function translate_doc(doc) {
+    return (doc in DOC) ? DOC[doc] : "no_doc"
+}
