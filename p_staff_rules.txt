@@ -8,7 +8,7 @@ gm 6 sh_per_fn(gm,4)
 gm 7 shifts_apc(gm,[0,1,2],[1,1,2],[1,0,0],4)
 
 
-db 1 shifts_apc(db,[1,1,0],[3,1,0],[2,2,0],4) /\ sh_per_fn(db,4)
+db 1 shifts_3a1p(db,4)
 db 2 each_week(db,{o,a},{o,a,p},{o},{a,o},{a,o,p},{a,o,p},{a,o,p})
 db 3 weekends_ap(db,2,0,2,0)
 db 4 FRI_P(db,2,2)
@@ -106,10 +106,11 @@ jl 3 weekends_ap(jl,1,1,1,1)
 jl 4 no_split_weekend(jl)
 jl 5 just_sh_per_fn(jl,3)
 
-rp 1 week_one(rp,{o},{a},{a},{c},{o},{o},{p})
-rp 2 week_two(rp,{o},{a},{a},{c},{o},{o},{p})
+rp 1 week_one(rp,{o},{a},{o},{p},{o},{o},{p})
+rp 2 week_two(rp,{o},{a},{o},{p},{c},{o},{p})
+rp 3 just_off_per_fn(rp,7) 
 
-ar 1 just_single_requests(ar) /*ffff*/
+ar 1 just_single_requests(ar)
 
 gn 1 each_week(gn,{p},{o},{p},{c},{o},{p},{o})
 gn 2 sh_per_fn(gn,4)
@@ -148,7 +149,12 @@ bm 5 shifts_apc(bm,[0,0,0],[0,1,0],[0,1,0],1)
 
 
 lw 1 just_single_requests(lw)
+
 xh 1 just_single_requests(xh)
+gn 1 just_single_requests(gn)
+rp 1 just_single_requests(rp)
 ls 1 just_single_requests(ls)
 km 1 just_single_requests(km)
 
+aw 1 no_shifts(aw)
+fh 1 no_shifts(fh)
