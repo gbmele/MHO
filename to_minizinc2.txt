@@ -1,8 +1,11 @@
-## 30/4/26 added upper_shift_count 
+## 16/5/2026 added just_constraints block  v_constraint variable to be passed in as v_constraint=1 at command line
 
 
 
 #usage gawk -f to_minizinc2.txt test_csv.txt > test_mzn.mzn
+
+## command line variable usage == gawk -v v__constraint=1 -f to_mninizinc2.txt
+
 
 function emit_rules(doc, i) { 
    for (i = 1; (doc,i) in doc_rules; i++){ 
@@ -18,8 +21,6 @@ function emit_rules(doc, i) {
 BEGIN {
     FS = ","; OFS = ",";
     doc_count = 0;
-
-    upper_shift_count = 6
 
     # Define leave shifts
     leave_shifts["al"] = 1;
@@ -322,20 +323,20 @@ printf" bool: F = false; \n"
 printf" bool: T = true;  \n"
 
 printf " %%global counts\n"
-printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],a) in 2..%s)));\n",++viol,upper_shift_count
-printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],p) in 2..%s)));\n",++viol,upper_shift_count
+printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
 
    
    #
@@ -360,15 +361,30 @@ printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|
         print ""    
    }
   
-
-
-
-
-
-
    for(i=1;i<=doc_count;i++){
        printf "/* %s  */constraint rule( T, V[%s], CC(%s, 0, 6 ) /\\ II(%s, 0 , 6) /\\ SS(%s, 0 , 6) );\n",docs[i],++viol,docs[i],docs[i],docs[i]
    }
+
+##JUST MAKE CONSTRAINTS
+## v_constraints variable to be passed in at command line....
+printf"\n"
+printf"\n"
+
+printf"% JUST CONSTRAINTS\n"
+   for(i=1;i<=doc_count;i++){
+        for(j=1; (docs[i],j) in doc_rules;j++){
+         if(v_constraint==1) printf "/*  %s  */",docs[i]
+         if(v_constraint==1) printf "constraint %s;\n",doc_rules[docs[i],j]
+        }
+        print ""    
+   }
+##END JUST CONSTRAINTS
+
+
+
+
+
+
 printf "int: RULES = %s; \n",viol 
 printf"  \n"
 printf"  \n"
@@ -466,3 +482,4 @@ printf"\n"
 function get_str(bl){
   return "this is bl"
 }
+

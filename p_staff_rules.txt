@@ -7,15 +7,14 @@ gm 5 each_week(gm,{c,o},{p,o},{o},{c,o},{a,o},{o},{a,o})
 gm 6 sh_per_fn(gm,4)
 gm 7 shifts_apc(gm,[0,1,2],[1,1,2],[1,0,0],4)
 
-
-db 1 shifts_3a1p(db,4)
-db 2 each_week(db,{o,a},{o,a,p},{o},{a,o},{a,o,p},{a,o,p},{a,o,p})
-db 3 weekends_ap(db,2,0,2,0)
-db 4 FRI_P(db,2,2)
+db 1 shifts_apc(db,[1,1,0],[3,1,0],[2,0,0],4)
+db 2 assign_shifts(db,friday,p,2,2)
+db 3 each_week(db,{o,a},{o,a,p},{o},{a,o},{a,o,p},{a,o,p},{a,o,p})
+db 4 weekends_ap(db,2,0,2,0)
 db 5 no_split_weekend(db)
-db 6 isolate_weekend(db)
-db 7 forall(fn in fortnights)(count(roster[db,fn],o,6))
-                        
+db 6 true /*isolate_weekend(db)*/
+db 7 no_am_after_pm(db)
+              
 mc 1 shifts_2a1p1c(mc,4) 
 mc 2 sh_per_fn(mc,4)
 mc 3 each_week(mc,{a,o},{a,o},{a,o,p},{c,o},{a,o,p},{a,o,p},{a,o,p})
@@ -62,6 +61,7 @@ rm 5 no_split_weekend(rm)
 rm 6 no_consec_weekends(rm)
 rm 7 FRI_P(rm,2,2)
 rm 8 no_am_after_pm(rm)
+rm 9 isolate_weekend(rm)
 
 pa 1 just_single_requests(pa)
 
@@ -77,28 +77,36 @@ tb 9 sh_per_fn(tb,3)
 tb 10 no_am_after_pm(tb)
 
 
-lb 1 each_week(lb,{a,o},{a,o},{a,o},{o},{o},{a,o},{a,o}) 
-lb 2 weekends_ap(lb,3,0)
+lb 1 each_week(lb,{o},{a,o},{a,o},{o},{o},{a,o},{a,o}) 
+lb 2 weekends_ap(lb,2,0,2,0)
+lb 3 no_split_weekend(lb)
+lb 4 shifts_apc(lb,[2,0,0],[2,0,0],[4,0,0],3)
 
 lc 1 each_week(lc,{o},{a,o,p},{o},{a,p,o},{o},{a,p,o},{a,p,o})
 lc 2 weekends_ap(lc,2,2)
+lc 3 no_split_weekend(lc) /\ no_consec_weekends(lc)
+lc 4 shifts_apc(lc,[1,1,0],[1,1,0],[2,2,0],3)
 
-dh 1 shifts_apc(dh,[1,1,0],[1,1,0],[0,3,0],2)
+dh 1 shifts_apc(dh,[1,0,0],[1,1,0],[0,3,0],2)
 dh 2 each_week(dh,{o},{o},{a,o},{o},{o,p},{p,o},{o})
 dh 3 weekends_ap(dh,0,3,0,0)
-                        
-sk 1 shifts_apc(sk,[0,1,1],[1,1,1],[2,2,0],3)
-sk 2 each_week(sk,{a,o},{c,o},{a,o,p},{o},{o},{a,p,o},{a,p,o})
+dh 4 sh_per_fn(dh,2)
+dh 5 forall(d in saturdays)(roster[dh,d]=p -> roster[dh,d-1]=o)         
+        
+sk 1 shifts_apc(sk,[0,0,1],[1,1,1],[2,2,0],3)
+sk 2 each_week(sk,{a,o},{c,o},{o,p},{o},{o},{a,p,o},{a,p,o})
 sk 3 weekends_ap(sk,1,1,1,1)
 sk 4 no_mon_after_sun(sk)
-sk 5 no_split_weekend(sk)
-sk 6 forall (day in 8..DAYS where day mod 7 = monday) (if roster[sk,day-1]=o then roster[sk,day]=a endif)
+sk 5 no_split_weekend(sk) /\ no_consec_weekends(sk)
+sk 6 sh_per_fn(sk,3)
 
-ml 1 each_week(ml,{o},{o},{a},{c,a,o},{o},{o},{a,p,o})
-ml 2 THU_C(ml,2,2)
-ml 3 just_sh_per_fn(ml,3)
-ml 4 assign_shifts(ml,sunday,a,0,6)
-ml 5 assign_shifts(ml,sunday,p,0,6)
+ml 1 each_week(ml,{o},{o},{a},{c,a},{o},{o},{a,p})
+ml 2 assign_shifts(ml,thursday,c,2,2)
+ml 3 sh_per_fn(ml,3)
+ml 4 assign_shifts(ml,sunday,a,5,10)
+ml 5 assign_shifts(ml,sunday,p,5,10)
+
+
 
 jl 1 week_one(jl,{o},{a,o},{c},{a,o},{o},{a,p,o},{a,p,o}) 
 jl 2 week_two(jl,{o},{p,o},{c},{p,o},{o},{a,p,o},{a,p,o})
@@ -106,14 +114,9 @@ jl 3 weekends_ap(jl,1,1,1,1)
 jl 4 no_split_weekend(jl)
 jl 5 just_sh_per_fn(jl,3)
 
-rp 1 week_one(rp,{o},{a},{o},{p},{o},{o},{p})
-rp 2 week_two(rp,{o},{a},{o},{p},{c},{o},{p})
-rp 3 just_off_per_fn(rp,7) 
-
-ar 1 just_single_requests(ar)
+rp 1 each_week(rp,{o},{a},{a},{c},{o},{o},{p})
 
 gn 1 each_week(gn,{p},{o},{p},{c},{o},{p},{o})
-gn 2 sh_per_fn(gn,4)
 
 ar 1 just_single_requests(ar)
 
@@ -134,7 +137,7 @@ ck 5 just_sh_per_fn(ck,3)
 
 blee 1 each_week(blee,{a,p,o},{a,o},{a,p,o},{a,p,o},{a,p,o},{a,p,o},{a,p,o})
 blee 2 no_am_after_pm(blee)
-blee 3 just_sh_per_fn(blee,4)
+blee 3 just_sh_per_fn(blee,3)
 blee 4 weekends_ap(blee,2,2,2,2)
 blee 5 no_split_weekend(blee)
 blee 6 isolate_weekend(blee)
@@ -149,12 +152,8 @@ bm 5 shifts_apc(bm,[0,0,0],[0,1,0],[0,1,0],1)
 
 
 lw 1 just_single_requests(lw)
-
 xh 1 just_single_requests(xh)
-gn 1 just_single_requests(gn)
-rp 1 just_single_requests(rp)
 ls 1 just_single_requests(ls)
 km 1 just_single_requests(km)
-
 aw 1 no_shifts(aw)
 fh 1 no_shifts(fh)
