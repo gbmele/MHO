@@ -143,6 +143,9 @@ blee 5 no_split_weekend(blee)
 blee 6 isolate_weekend(blee)
 blee 7 no_three_p(blee)
 
+hl 1 forall(d in days) (roster[hl,d] in requests[hl,d] \/ roster[hl,d] in [{a},{a},{c},{p},{o,p},{a,o},{a,o}][((d -1 ) mod 7 )+1])
+
+
 bm 1 each_week(bm,{o},{o},{o},{o,p},{o},{o,p},{o})
 bm 2 sh_per_fn(bm,1)
 bm 3 assign_shifts(bm,saturday,p,2,4)

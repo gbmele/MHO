@@ -1,3 +1,7 @@
+%%17/5/26 edited each_week
+
+
+
 %predicate DOC_TABLE(docs:doc,array[int,int]of shifts:doctable) =
 %          forall (w in weeks)(table([roster[doc,day] | day in w],doctable));
 
@@ -233,8 +237,8 @@ predicate shifts_apc(docs: doc,array[int]of int: APClo, array[int] of int:APChi,
         (count(day in wk)(roster[doc,day] in leave_shifts) >=leave_count   \/
      
         (global_cardinality_low_up([roster[doc,d] | d in wk where d mod 7 in {1,2,3,4,5}],[a,p,c],APClo,APChi) /\
-        global_cardinality_low_up([roster[doc,d] | d in  wk  where d mod 7 in {saturday,sunday}],[a,p,c],[0,0,0],WENDhi))); %  /\
-        %count(day in wk)(roster[doc,day] in {a,p,c}) in {leave_count-1,leave_count,leave_count+1}));
+        global_cardinality_low_up([roster[doc,d] | d in  wk  where d mod 7 in {saturday,sunday}],[a,p,c],[0,0,0],WENDhi) /\
+        count(day in wk)(roster[doc,day] in {a,p,c}) in {leave_count-1,leave_count,leave_count+1}));
 
 
 
@@ -243,8 +247,8 @@ predicate shifts_2a1p1c(docs: doc,int:leave_count)=
         (count(day in wk)(roster[doc,day] in leave_shifts) >=leave_count   \/
      
         (global_cardinality_low_up([roster[doc,d] | d in wk where d mod 7 in {1,2,3,4,5}],[a,p,c],[0,1,1],[2,1,1]) /\
-        global_cardinality_low_up([roster[doc,d] | d in  wk  where d mod 7 in {saturday,sunday}],[a,p,c],[0,0,0],[2,2,0]) /\
-        count(day in wk)(roster[doc,day] in {a,p,c}) in {leave_count-1,leave_count,leave_count+1}));
+        global_cardinality_low_up([roster[doc,d] | d in  wk  where d mod 7 in {saturday,sunday}],[a,p,c],[0,0,0],[2,2,0]))); % /\
+        % count(day in wk)(roster[doc,day] in {a,p,c}) in {leave_count-1,leave_count,leave_count+1}));
 
 
 predicate shifts_3a1p(docs: doc,int:leave_count)=
@@ -458,13 +462,13 @@ predicate each_week(docs:doc,set of shifts:MM,set of shifts:TT,set of shifts: WW
           %( if card(requests[doc,d]) in 1..2 then roster[doc,d] in requests[doc,d] else false endif) \/
           (card(requests[doc,d]) in  1..2 /\ roster[doc,d] in requests[doc,d]) \/
           (
-          (d mod 7 in mondays    -> roster[doc,d] in MM)  /\
-          (d mod 7 in tuesdays   -> roster[doc,d] in TT)  /\
-          (d mod 7 in wednesdays -> roster[doc,d] in WW)  /\
-          (d mod 7 in thursdays  -> roster[doc,d] in TH)  /\
-          (d mod 7 in fridays    -> roster[doc,d] in FR)  /\
-          (d mod 7 in saturdays  -> roster[doc,d] in SAT) /\
-          (d mod 7 in sundays    -> roster[doc,d] in SUN)
+          (d mod 7 = monday    -> roster[doc,d] in MM)  /\
+          (d mod 7 = tuesday   -> roster[doc,d] in TT)  /\
+          (d mod 7 = wednesday -> roster[doc,d] in WW)  /\
+          (d mod 7 = thursday  -> roster[doc,d] in TH)  /\
+          (d mod 7 = friday    -> roster[doc,d] in FR)  /\
+          (d mod 7 = saturday  -> roster[doc,d] in SAT) /\
+          (d mod 7 = sunday    -> roster[doc,d] in SUN)
 
         ));
 
@@ -478,9 +482,9 @@ predicate week_apc(docs:doc,set of shifts:MM,set of shifts:TT,set of shifts: WW,
     (roster[doc,d] in [MM,TT,WW,TH,FR,SAT,SUN][(d - 1) mod 7 + 1])
   )
   /\
-  ( sum(d in wk)(roster[doc,d] = a) >= Alo /\ sum(d in wk)(roster[doc,d] = a) <=Ahi /\
-    sum(d in wk)(roster[doc,d] = p) >= Plo /\ sum(d in wk)(roster[doc,d] = p) <=Phi /\
-    sum(d in wk)(roster[doc,d] = c) >= Clo /\ sum(d in wk)(roster[doc,d] = c) <=Chi
+  ( sum(d in wk where d mod 7 in {1,2,3,4,5})(roster[doc,d] = a) in Alo..Ahi /\
+    sum(d in wk where d mod 7 in {1,2,3,4,5})(roster[doc,d] = p) in Plo..Phi /\
+    sum(d in wk where d mod 7 in {1,2,3,4,5})(roster[doc,d] = c) in Clo..Chi
   )
 );
 
