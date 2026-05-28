@@ -145,6 +145,7 @@ blee 7 no_three_p(blee)
 
 hl 1 forall(d in days) (roster[hl,d] in requests[hl,d] \/ roster[hl,d] in [{a},{a},{c},{p},{o,p},{a,o},{a,o}][((d -1 ) mod 7 )+1])
 
+hl 2  [ roster[hl,d] in requests[hl,d] \/ roster[hl,d] in TEMPLATE[((d-1) mod 7)+1] | d in days ] = [ true | d in days ]
 
 bm 1 each_week(bm,{o},{o},{o},{o,p},{o},{o,p},{o})
 bm 2 sh_per_fn(bm,1)
