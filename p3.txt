@@ -169,7 +169,7 @@ NR > 1 {
             else 
             if (raw in translate) shift = translate[raw]
             else
-            shift = "\n" "XX_____________NO_TRANSLATE "  raw  "\n"   ## very raw error screen dump
+            shift = "\n\n" "XX_____________NO_TRANSLATE "  raw  "\n\n"   ## very raw error screen dump
 
             n++
             S[n] = shift
