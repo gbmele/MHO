@@ -1,4 +1,4 @@
-##30/4/26 added perera ward
+## LATEST 28/5/26
 
 BEGIN {
     ## usage gawk -f p3 data1 data2 data3 
@@ -39,15 +39,13 @@ BEGIN {
     DOC["Hoo"]="xh"
     DOC["Knight"]="ck"
     DOC["Lee"]="blee"
-    DOC["Mccarthy"]="bm"
+    #DOC["Mccarthy"]="bm"
     DOC["Mc Carthy"]="bm"
-    DOC["Tang"]="lt"   		##leonie Tang
     DOC["Moussa"]="km"
     DOC["Wallace"]="aw"
-    DOC["Lynch"]="mlynch" 	##Marty Lynch
-    DOC["Perera"] ="yp" 	## yas perera
-    DOC["Ward"] = "lw" 		## libby ward  
-
+    #DOC["Chan"]="jc"
+    DOC["Lynch"]="mlynch"
+    DOC["Tang"]="ltang"
 
     JUST_REQUEST["pa"]=1
     JUST_REQUEST["ls"]=1
@@ -69,17 +67,20 @@ BEGIN {
     translate["CST 0800-1600"]="c"
     translate["CST 1200-1800"]="c"
     translate["CST 1200-1500"]="c"
+    translate["CST 1200-1400"]="p" ## for ruths pm shifts ie 12-16 then 16-24
     translate["CST 1200-1600"]="c"
     translate["CST 1100-1600"]="c"
     translate["CST 1400-1600"]="p"
     translate["CST 1600-1800"]="c"
     translate["CST 1700-1800"]="c"
     translate["CST 1400-1800"]="c"
-    translate["CST 1400-1700"]="c"
 
     translate["MH 0800-1800 SSU"]="a"
     translate["MH 0800-1800 IC"]="a"
     translate["MH 0800-1800"]="a"
+    translate["MH 0800-1400"]="a"   ##ruth new shift
+    translate["MH 1000-2000"]="a"   ## ruth new shift
+ 
     translate["MH 0800-1700 SSU"]="a"
     translate["MH 0800-1700 IC"]="a"
     translate["MH 0800-1700"]="a"
@@ -91,19 +92,20 @@ BEGIN {
     translate["MH 1400-2400"]="p"
     translate["MH 1700-2400"]="p"
 
-    translate["Study Leave"]="cl"
-    translate["CONF"]="cl"
-    translate["AL"]="al"
+    translate["PLwoc"]="perl"
+    translate["PHNW"]="phnw"
     translate["Annual Leave"]="al"
+    translate["CONF"]="cl"
+    translate["Study Leave"]="cl"
+    translate["AL"]="al"
     translate["al"]="al"
+    translate["CL"]="perl"
     translate["LPPA"]="lppa"
     translate["L-WOP"]="lwop"
     translate["oc"]="p"
     translate["OnCall"]="p"
     translate["0000-0800 OC CAT2"]="p"
     translate["DFL"]="l"
-    translate["PHNW"]="phnw"
-
 
     translate["U 0000-2359"]="o"
     translate["AP 0000-2359"]="apo"
@@ -167,7 +169,7 @@ NR > 1 {
             else 
             if (raw in translate) shift = translate[raw]
             else
-            shift = "XX__NO_TRANSLATE"
+            shift = "\n" "XX_____________NO_TRANSLATE "  raw  "\n"   ## very raw error screen dump
 
             n++
             S[n] = shift
