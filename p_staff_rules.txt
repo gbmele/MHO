@@ -143,15 +143,25 @@ blee 5 no_split_weekend(blee)
 blee 6 isolate_weekend(blee)
 blee 7 no_three_p(blee)
 
-hl 1 forall(d in days) (roster[hl,d] in requests[hl,d] \/ roster[hl,d] in [{a},{a},{c},{p},{o,p},{a,o},{a,o}][((d -1 ) mod 7 )+1])
+hl 1 forall(d in days) (card(requests[hl,d]) = 1 /\ roster[hl,d] in requests[hl,d] \/ roster[hl,d] in [{a,o},{a,o},{c},{o,p},{o,p},{a,o},{a,o}][((d -1 ) mod 7 )+1])
+hl 2 forall(f in fortnights)(count(roster[hl,f],o,14-8))
 
-hl 2  [ roster[hl,d] in requests[hl,d] \/ roster[hl,d] in TEMPLATE[((d-1) mod 7)+1] | d in days ] = [ true | d in days ]
+hl 3  [ card(requests[hl,d])=1 /\ roster[hl,d] in requests[hl,d] \/ roster[hl,d] in [{a,o},{a,o},{c},{o,p},{o,p},{a,o},{a,o}][((d-1) mod 7)+1] | d in days ] = [ true | d in days ]
+
+hl 4 [count(roster[hl,f],o,6) | f in fortnights]=[true | f in fortnights]
+
+hl 5 /* no am after pm  */ [roster[hl,d] = p -> roster[hl,d+1] != a | d in 1..DAYS-1] = [true | d in 1..DAYS-1]
+
+hl 6  sum([ roster[hl,d] = p | d in fridays ]) = 2
+
+hl 7 sum( [roster[hl,d]=a | d in saturdays union sundays]) = 4
 
 bm 1 each_week(bm,{o},{o},{o},{o,p},{o},{o,p},{o})
 bm 2 sh_per_fn(bm,1)
 bm 3 assign_shifts(bm,saturday,p,2,4)
 bm 4 THU_P(bm,2,10)
 bm 5 shifts_apc(bm,[0,0,0],[0,1,0],[0,1,0],1)
+
 
 
 
