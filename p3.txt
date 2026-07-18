@@ -1,4 +1,10 @@
-## LATEST 28/5/26..
+##latest 16/7
+
+
+## 260713
+## 13/7/26 added translate shifts for helen
+## 13/7   two chans!!!! -- changed regexps to produce LastNameFirstInitial in MeleG
+## 13/7   #commented sue dowling to get her out
 
 BEGIN {
     ## usage gawk -f p3 data1 data2 data3 
@@ -11,49 +17,55 @@ BEGIN {
     FS = ","
     OFS = ","
 
-    # Doctor code map
-    DOC["Land"]="bl"
-    DOC["Mele"]="gm"
-    DOC["Bui"]="db"
-    DOC["Cobelas"]="cc"
-    DOC["Chong"]="mc"
-    DOC["Lowman"]="dl"
-    DOC["Marson"]="rm"
-    DOC["Dowling"]="sd"
-    DOC["Laurence"]="hl"
-    DOC["Nathan"]="gn"
-    DOC["Archer"]="pa"
-    DOC["Bridgart"]="tb"
-    DOC["Bridgford"]="lb"
-    DOC["Clarke"]="lc"
-    DOC["Hezekiah"]="dh"
-    DOC["Kapitan"]="sk"
-    DOC["Lew"]="ml"
-    DOC["Lim"]="jl"
-    DOC["Primrose"]="rp"
-    DOC["Rathe"]="sr"
-    DOC["Rosengarten"]="ar"
-    DOC["Smith"]="ls"
-    DOC["Varma"]="av"
-    DOC["Hannon"]="fh"
-    DOC["Hoo"]="xh"
-    DOC["Knight"]="ck"
-    DOC["Lee"]="blee"
-    #DOC["Mccarthy"]="bm"
-    DOC["Mc Carthy"]="bm"
-    DOC["Moussa"]="km"
-    DOC["Wallace"]="aw"
-    #DOC["Chan"]="jc"
-    DOC["Lynch"]="mlynch"
-    DOC["Tang"]="ltang"
+  # Doctor code map
+    DOC["LandB"]="bl"
+    DOC["MeleG"] = DOC["Mele"]="gm"
+    DOC["BuiD"]="db"
+    DOC["CobelasC"]="cc"
+    DOC["ChongM"]="mc"
+    DOC["LowmanD"]="dl"
+    DOC["MarsonR"]="rm"
+  # DOC["DowlingS"]="sd"  dont need to see sue while she is at angliss
+    DOC["LaurenceH"]="hl"
+    DOC["NathanG"]="gn"
+    DOC["ArcherP"]="pa"
+    DOC["BridgartT"]="tb"
+    DOC["BridgfordL"]="lb"
+    DOC["ClarkeL"]="lc"
+    DOC["HezekiahD"]="dh"
+    DOC["KapitanS"]="sk"
+    DOC["LewM"]="ml"
+    DOC["LimJ"]="jl"
+    DOC["PrimroseR"]="rp"
+    #DOC["RatheS"]="sr"
+    DOC["RosengartenA"]="ar"
+    DOC["SmithL"]="ls"
+    DOC["VarmaA"]="av"
+    DOC["HannonF"]="fh"
+    DOC["HooX"]="xh"
+    DOC["KnightC"]="ck"
+    DOC["LeeB"]="blee"
+    #DOC["MccarthyB"]="bm"
+    DOC["Mc CarthyB"]="bm"
+    DOC["MoussaK"]="km"
+    DOC["WallaceA"]="aw"
+    DOC["ChanJ"]="jc"		##jannet chan
+    DOC["LynchM"]="mlynch"
+    DOC["TangL"]="ltang"
+    DOC["WoodwardE"]= "ew"
+  # DOC["ChanR"]= "rc"    ##ray chan
+    DOC["PereraY"]="yp"
+    DOC["WardL"] = "lw"
 
-    JUST_REQUEST["pa"]=1
-    JUST_REQUEST["ls"]=1
-    JUST_REQUEST["km"]=1
-    JUST_REQUEST["aw"]=1
-    JUST_REQUEST["rp"]=1
-    JUST_REQUEST["gn"]=1
-    JUST_REQUEST["hl"]=1
+
+
+#    JUST_REQUEST["pa"]=1
+#    JUST_REQUEST["ls"]=1
+#   JUST_REQUEST["km"]=1
+#    JUST_REQUEST["aw"]=1
+#    JUST_REQUEST["rp"]=1
+#    JUST_REQUEST["gn"]=1
+#   JUST_REQUEST["hl"]=1
 
 
 
@@ -91,6 +103,12 @@ BEGIN {
     translate["MH 1600-2400"]="p"
     translate["MH 1400-2400"]="p"
     translate["MH 1700-2400"]="p"
+
+    translate["MH 0800-1600?"]= "a"  ##this covers helens requests that have a love heart emoji
+    translate["MH 1600-2400?"]= "p"
+    translate["CST 0800-1800?"]= "c"
+
+    translate["U 0000-2359?"]= "o"
 
     translate["PLwoc"]="perl"
     translate["PHNW"]="phnw"
@@ -137,9 +155,20 @@ NR > 1 {
     # Process doctor rows
     if ($1 ~ /^"(Doctor|Specialist) - /) {
 
-        sub(/^"(Doctor|Specialist) - /, "", $1)
-        sub(/"$/, "", $1)
-        sub(/,.*/, "", $1)
+
+
+#13/7        sub(/^"(Doctor|Specialist) - /, "", $1)
+#13/7        sub(/"$/, "", $1)
+#13/7        sub(/,.*/, "", $1)
+
+#13/7[
+	## this one does MeleG
+	$1 = gensub(/^"(Doctor|Specialist) - ([^,]+), *([A-Za-z]).*/, "\\2\\3", "1")
+	
+	## this one just gets last name out $1 = gensub(/^"(Doctor|Specialist) - ([^,]+),.*/, "\\2", "1")
+
+	print $1
+#13/7]
 
         doc = translate_doc($1)
 
