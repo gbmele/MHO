@@ -1,3 +1,8 @@
+##20/7/26 latest version
+
+##19/7 various temp changes --- can see in commented blocks
+##19/7/26 created free_weekend_before_leave(doc)
+
 ew 1 each_week(ew,{c},{c},{c},{p,o},{o},{o,p},{o})
 ew 2 assign_shifts(ew,thursday,p,1,8)
 ew 3 assign_shifts(ew,saturday,p,1,8)
