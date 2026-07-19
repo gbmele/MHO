@@ -2,9 +2,9 @@
 
 
 
-#usage gawk -f to_minizinc2.txt test_csv.txt > test_mzn.mzn
+#16/5/26 usage gawk -f to_minizinc2.txt test_csv.txt > test_mzn.mzn
 
-## command line variable usage == gawk -v v_constraint=1 -f to_mninizinc2.txt
+## command line variable usage ==> gawk -v v_constraint=1 -f to_mninizinc2.txt
 
 
 function emit_rules(doc, i) { 
@@ -323,20 +323,20 @@ printf" bool: F = false; \n"
 printf" bool: T = true;  \n"
 
 printf " %%global counts\n"
-printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],a) in 2..10)));\n",++viol
-printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],p) in 2..10)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in mondays)   (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in tuesdays)  (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in wednesdays)(count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in thursdays) (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in fridays)   (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in saturdays) (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],a) in 3..6)));\n",++viol
+printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|doc in docs],p) in 3..6)));\n",++viol
 
    
    #
@@ -362,7 +362,7 @@ printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|
    }
   
    for(i=1;i<=doc_count;i++){
-       printf "/* %s  */constraint rule( T, V[%s], CC(%s, 0, 16 ) /\\ II(%s, 0 , 16) /\\ SS(%s, 0 , 16) );\n",docs[i],++viol,docs[i],docs[i],docs[i]
+       printf "/* %s  */constraint rule( T, V[%s], CC(%s, 0, 10 ) /\\ II(%s, 0 , 10) /\\ SS(%s, 0 , 10) );\n",docs[i],++viol,docs[i],docs[i],docs[i]
    }
 
 ##JUST MAKE CONSTRAINTS

@@ -22,6 +22,7 @@ constraint forall(d in days)(
 
 constraint forall(d in days)(
     sum(doc in docs)(oncall[doc,d]) = 1);
+    
     %sum(doc in docs where roster[doc,d] = p)(oncall[doc,d],1) = 1;
     %count(oncall[..,d],1,1));
     
