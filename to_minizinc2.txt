@@ -1,8 +1,12 @@
+##latest 23/7 
+##23/7/2026 	added variable SIC for command line
+## 	when SIC=1 the SIC constraints are hard coded (this is when i have the roster done done and just need to allocated ssu incharge and oncall.
+##      usage gawk -f p3.txt aug_1_4.csv aug_5_8.csv aug_9_10.csv | gawk -v SIC=1 -f to_minizinc2.txt > aug_main222.mzn
+
+
 ## 16/5/2026 added just_constraints block  v_constraint variable to be passed in as v_constraint=1 at command line
 
-
-
-#16/5/26 usage gawk -f to_minizinc2.txt test_csv.txt > test_mzn.mzn
+## 16/5/26 usage gawk -f to_minizinc2.txt test_csv.txt > test_mzn.mzn
 
 ## command line variable usage ==> gawk -v v_constraint=1 -f to_mninizinc2.txt
 
@@ -365,18 +369,27 @@ printf " constraint rule(T, V[%s],(forall(d in sundays)   (count([roster[doc,d]|
        printf "/* %s  */constraint rule( T, V[%s], CC(%s, 0, 10 ) /\\ II(%s, 0 , 10) /\\ SS(%s, 0 , 10) );\n",docs[i],++viol,docs[i],docs[i],docs[i]
    }
 
+
+printf "int: RULES = %s; \n",viol 
+printf"  \n"
+printf"  \n"
+
+
 ##JUST MAKE CONSTRAINTS
+
 ## v_constraints variable to be passed in at command line....
 printf"\n"
 printf"\n"
 
-printf"% JUST CONSTRAINTS\n"
+printf"% JUST HARD SIC CONSTRAINTS\n"
    for(i=1;i<=doc_count;i++){
         for(j=1; (docs[i],j) in doc_rules;j++){
          if(v_constraint==1) printf "/*  %s  */",docs[i]
          if(v_constraint==1) printf "constraint %s;\n",doc_rules[docs[i],j]
+
         }
-        print ""    
+        #print ""    
+
    }
 ##END JUST CONSTRAINTS
 
@@ -385,9 +398,20 @@ printf"% JUST CONSTRAINTS\n"
 
 
 
-printf "int: RULES = %s; \n",viol 
-printf"  \n"
-printf"  \n"
+
+
+
+##23/7 JUST SIC added SIC variable to be passed in command line
+##23/7[
+	## just constraints for oncall incahrge and ssu coutns
+	for(i=1;i<=doc_count;i++){
+        
+		if(SIC==1) printf "constraint CC(%s,0,10) /\\ II(%s, 0, 10) /\\ SS(%s, 0, 10); \n", docs[i], docs[i], docs[i]
+	}
+
+##23/7]
+
+
 
 printf"% ============================================================\n"
 printf"% OBJECTIVE\n"
@@ -482,4 +506,3 @@ printf"\n"
 function get_str(bl){
   return "this is bl"
 }
-
