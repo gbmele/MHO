@@ -75,12 +75,15 @@ output ["\n\n\n"];
 %output [
 %  "IC" ++ "," ++
 %  concat([show(incharge_doc[day]) ++ if day != 70 then "," else "" endif| day in days])];
-output ["\n"];
+%output ["\n"];
+
 %%ONCALL
+
 %output [
 %  "CALL" ++ "," ++
 %  concat([show(oncall_doc[day]) ++ if day != 70 then "," else "" endif| day in days])];
-%output ["\n"];
+%output ["\n\n\n"];
+
 
 output[" show SIC \n\n"];
 output [
@@ -107,6 +110,31 @@ output[
 ];
 output["\n"];
 
+output["INCHARGE STUFF22\n"];
+output[
+  concat([
+    show(doc) ++
+    (if d < max(days) then "," else "" endif)
+    | d in days, doc in docs where fix(incharge[doc,d]) = 1
+  ])
+];
+output["\n"];
+
+output["SSU STUFF22\n"];
+output[
+  concat([
+    show(doc) ++
+    (if d < max(days) then "," else "" endif)
+    | d in days, doc in docs where fix(ssu[doc,d]) = 1
+  ])
+];
+output["\n"];
+
+
+
+
+
+
 output[show(doc)   ++ 
 			" we_am: " ++ show(fix(count([roster[doc,d]| d in days where d mod 7 in {saturday,sunday}],a))) ++ ","         ++
 
@@ -123,7 +151,15 @@ output[show(doc)   ++
                     
                     | doc in docs];
 
-
+%%prints out each doc on call day, and the day number -- shows great spacing between oncalls.  
+output [
+  if fix(oncall[doc,day]) = 1 then
+      show(doc) ++ " day " ++ show(day) ++ "\n"
+  else
+      ""
+  endif
+  | doc in docs, day in days
+ ];
 
 
 
@@ -146,4 +182,5 @@ output[show(doc)   ++
                     
                     | doc in docs];
                     
-*/                    
+*/            
+      
