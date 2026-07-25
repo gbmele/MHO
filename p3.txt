@@ -1,10 +1,10 @@
-##latest 16/7
+##latest 25/7
 
-
-## 260713
-## 13/7/26 added translate shifts for helen
-## 13/7   two chans!!!! -- changed regexps to produce LastNameFirstInitial in MeleG
-## 13/7   #commented sue dowling to get her out
+#help pass variable help in and the below help lines will be print. pass p3 to itself.
+#help # 260713
+#help # 13/7/26 added translate shifts for helen
+#help 13/7   two chans!!!! -- changed regexps to produce LastNameFirstInitial in MeleG
+#help 13/7   #commented sue dowling to get her out
 
 BEGIN {
     ## usage gawk -f p3 data1 data2 data3 
@@ -134,6 +134,18 @@ BEGIN {
 
 } #END BEGIN
 
+
+help && /^#help/{
+	print	
+	next 
+		
+}
+
+
+
+
+
+
 # Reset ONLY per-file state
 FNR == 1 {
     delete KEEP
@@ -167,7 +179,7 @@ NR > 1 {
 	
 	## this one just gets last name out $1 = gensub(/^"(Doctor|Specialist) - ([^,]+),.*/, "\\2", "1")
 
-	print $1
+	##print $1
 #13/7]
 
         doc = translate_doc($1)
@@ -193,8 +205,15 @@ NR > 1 {
             gsub(/^ +| +$/, "", raw)
             gsub(/"/, "", raw)
 
-      
-            if (raw == "") shift = "apoc"
+
+##21/7[
+	    if (raw == "" && apoc == 1)
+    	     shift = "apoc"
+            else
+##21/7]
+            if (raw == "") shift = "o"
+
+
             else 
             if (raw in translate) shift = translate[raw]
             else
