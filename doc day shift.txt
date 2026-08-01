@@ -1,0 +1,39 @@
+{
+    # 1. Collect real data from the file
+    roster[$1, $2] = $3
+    
+    # 2. Track unique doctors and unique days seen in the data
+    all_docs[$1] = 1
+    all_days[$2] = 1
+}
+END {
+    # 3. Cross-reference every doctor against every day
+    PROCINFO["sorted_in"] = "@ind_str_asc"
+
+   # This loop will now run strictly chronologically (e.g., 20260801, 20260802...)
+    for (day in all_days) {
+        print "--- Processing Date: " day " ---"
+        
+        for (doc in all_docs) {
+            # Fill missing cells with "o" on the fly
+            if (!((doc, day) in roster)) {
+                roster[doc, day] = "o"
+            }
+            print doc, "->", roster[doc, day]
+        }
+    }
+}  
+
+
+
+
+
+# Custom function to reformat dates
+function to_yyyymmdd(date_str,    parts) {
+    # split breaks "DD/MM/YYYY" into parts[1]="DD", parts[2]="MM", parts[3]="YYYY"
+    if (split(date_str, parts, "/") == 3) {
+        # Concatenate them back together in the correct order
+        return parts[3] parts[2] parts[1]
+    }
+    return date_str # Return original if string format doesn't match
+}
