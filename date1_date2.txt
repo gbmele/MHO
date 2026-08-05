@@ -1,0 +1,38 @@
+BEGIN{
+
+	date1="21/07/2026"
+	date2 ="24/07/2026"
+
+	d1 = make_date(date1)
+	d2 = make_date(date2)
+
+	print date1 " " d1
+	print date2 " " d2
+	
+        doc = "gm"
+	leave_type = "AL"
+        
+        out = doc
+	for(d=d1;d<=d2;d++){
+		out = out "," leave_type
+	}
+	print out
+
+
+}
+
+END{
+print "done"
+}
+
+
+
+function make_date(dstr,    d,m,y) {
+    split(dstr, a, "/")
+    d = a[1]
+    m = a[2]
+    y = a[3]
+
+    # mktime expects: YYYY MM DD HH MM SS
+    return int(mktime(y " " m " " d " 00 00 00") / 86400)
+}
