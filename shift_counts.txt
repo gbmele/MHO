@@ -1,0 +1,56 @@
+BEGIN{
+	FS=","
+
+	mon = 1
+	tue = 2
+	wed = 3
+	thu = 4
+	fri = 5
+	sat = 6
+	sun = 0
+
+}
+
+{
+	DOC = $1
+	DOCS[DOC]=1
+
+	ret=DOC " | "
+
+	for(i=2;i<=NF;i++){
+
+		day = i - 1
+
+		sh = $i
+
+		if( day % 7 == sat && match(sh,/\y(a|p)\y/)) {docs[DOC,sat]++} 
+
+		else
+
+		if( day % 7 == sun && (sh == "a" || sh == "p")) {docs[DOC,sun]++} 
+
+
+		# build weekends output
+
+		if ( day % 7  == sat ) ret = ret " " sh
+		#else
+		if ( day % 7  == sun ) ret = ret " " sh " | "
+
+
+	} #for
+
+	print ret
+
+
+} #MAIN
+
+END{
+
+	for(doc in DOCS){
+
+		print doc " SAT = " docs[doc,sat] "  SUN = " docs[doc,sun] 
+
+
+	}#FOR
+
+} #END
