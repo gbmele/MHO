@@ -1,0 +1,125 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DATA YOU PROVIDE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+set of int: DOCTORS;
+set of int: DAYS;
+enum SHIFT = {a,p,c,o};
+ 
+% Existing roster (fixed data)
+array[DOCTORS,DAYS,SHIFT] of 0..1: roster;
+ 
+% Required totals per doctor
+array[DOCTORS] of int: target_s;
+array[DOCTORS] of int: target_i;
+array[DOCTORS] of int: target_oc;
+ 
+% Minimum gap between OC assignments
+% Example: 7 means at most one OC in any 7-day window
+int: min_oc_gap;
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DECISION VARIABLES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+array[DOCTORS,DAYS] of var bool: s;
+array[DOCTORS,DAYS] of var bool: i;
+array[DOCTORS,DAYS] of var bool: oc;
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ROLE MUST MATCH UNDERLYING SHIFTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+constraint forall(d in DOCTORS, day in DAYS)(
+s[d,day] -> roster[d,day,a] = 1
+);
+ 
+constraint forall(d in DOCTORS, day in DAYS)(
+i[d,day] -> roster[d,day,a] = 1
+);
+ 
+constraint forall(d in DOCTORS, day in DAYS)(
+oc[d,day] -> roster[d,day,p] = 1
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DAILY REQUIREMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+constraint forall(day in DAYS)(
+sum(d in DOCTORS)(bool2int(s[d,day])) = 1
+);
+ 
+constraint forall(day in DAYS)(
+sum(d in DOCTORS)(bool2int(i[d,day])) = 1
+);
+ 
+constraint forall(day in DAYS)(
+sum(d in DOCTORS)(bool2int(oc[d,day])) = 1
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% S AND I CANNOT BE THE SAME PERSON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+constraint forall(d in DOCTORS, day in DAYS)(
+bool2int(s[d,day]) +
+bool2int(i[d,day]) <= 1
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COUNT ASSIGNMENTS PER DOCTOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+array[DOCTORS] of var int: n_s;
+array[DOCTORS] of var int: n_i;
+array[DOCTORS] of var int: n_oc;
+ 
+constraint forall(d in DOCTORS)(
+n_s[d] =
+sum(day in DAYS)(bool2int(s[d,day]))
+);
+ 
+constraint forall(d in DOCTORS)(
+n_i[d] =
+sum(day in DAYS)(bool2int(i[d,day]))
+);
+ 
+constraint forall(d in DOCTORS)(
+n_oc[d] =
+sum(day in DAYS)(bool2int(oc[d,day]))
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TARGETS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+constraint forall(d in DOCTORS)(
+n_s[d] = target_s[d]
+);
+ 
+constraint forall(d in DOCTORS)(
+n_i[d] = target_i[d]
+);
+ 
+constraint forall(d in DOCTORS)(
+n_oc[d] = target_oc[d]
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NO MORE THAN ONE OC IN ANY min_oc_gap DAY WINDOW
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+constraint
+forall(d in DOCTORS,
+day in 1..card(DAYS)-min_oc_gap+1)(
+sum(k in day..day+min_oc_gap-1)(
+bool2int(oc[d,k])
+) <= 1
+);
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SOLVE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+solve satisfy;
